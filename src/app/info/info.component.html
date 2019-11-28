@@ -1,0 +1,24 @@
+<div class="info">
+    <div class="selects">
+        <div class="select">
+            <label class="select-label">Estado:</label>
+            <select class="select-uf"  (change)="feedMunicipios()" [disabled]="ufDisable" [(ngModel)]="ufModel">
+                <option value="">Selecione um estado</option>
+                <option *ngFor="let uf of ufsList" [value]="uf.id">{{uf.nome}}</option>
+            </select>
+        </div>
+
+        <div class="select">
+            <label class="select-label">Município:</label>
+            <select class="select-municipio" (change)="feedGrafico()" [disabled]="municipioDisable" [(ngModel)]="municipioModel" >
+                <option value="">Selecione um município</option>
+                <option *ngFor="let municipio of municipiosList" [(value)]="municipio.id">{{municipio.nome}}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="grafico">
+            <canvas id="lineChart">
+          </canvas>
+    </div>
+</div>
