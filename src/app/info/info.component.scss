@@ -55,7 +55,6 @@
         font-size: 24px;
         color: white;
         width: 100%;
-        margin-top: 10px;
         text-align: center;
         margin-bottom: 10px;
     }
@@ -102,6 +101,14 @@
 
 @media screen and (max-width: 768px) {
     .info{
+        .selects{
+            margin-bottom: 40px;
+
+            .select{
+                margin: 20px 45px;
+            }
+        }
+
         .grafico-legenda{
             margin-top: 30px;
             margin-left: 20px;
