@@ -2,7 +2,7 @@
 
     .loading{
         height: 100vh;
-        position: absolute;
+        position: fixed;
         width: 100vw;
         top:0;
         right: 0;
@@ -31,11 +31,10 @@
         width: 100%;
         display: flex;
         flex-wrap: wrap;
-        margin-top: 20px;
 
         .select{
             width: 400px;
-            margin: 50px;
+            margin: 45px;
             font-size: 20px;
 
             .select-label{

@@ -50,7 +50,7 @@ export class InfoComponent implements OnInit {
     this.loading = true;
     this.municipioModel = "";
     this.municipioDisable = true;
-    this.dataService.getSelectsInfo("http://servicodados.ibge.gov.br/api/v1/localidades/estados/" + this.ufModel +"/municipios").subscribe((data: any[])=>{
+    this.dataService.getSelectsInfo("https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + this.ufModel +"/municipios").subscribe((data: any[])=>{
       this.sortAlphabetically(data);
       this.municipiosList = data;
       if(this.municipiosList != []){
