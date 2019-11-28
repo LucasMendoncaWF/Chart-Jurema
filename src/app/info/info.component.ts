@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
-import { ChartOptions, ChartDataSets} from 'chart.js';
-import { Label, Color } from 'ng2-charts';
 import { forkJoin } from 'rxjs';
+import { ChartDataSets, ChartOptions } from 'chart.js';
+import { Color, Label } from 'ng2-charts';
 import * as Chart from 'chart.js';
 
 @Component({
@@ -12,6 +12,7 @@ import * as Chart from 'chart.js';
 })
 export class InfoComponent implements OnInit {
 
+  LineChart: any;
   //Variaveis relacionadas ao HTML
   ufsList: Object = [];
   municipiosList: Object = [];
@@ -19,9 +20,9 @@ export class InfoComponent implements OnInit {
   municipioModel: string = "";
   ufDisable: boolean = true;
   municipioDisable: boolean = true;
-
-  //meses que vao aparecer no grafico
   graficoInfo = [];
+  beneficiarios = [];
+  valor = [];
   //codigo dos meses
   months: Object = {"01": "Janeiro", "02": "Fevereiro", "03": "Março", "04": "Abril", "05": "Maio", "06": "Junho", "07": "Julho", "08": "Agosto", "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro"};
 
@@ -56,7 +57,8 @@ export class InfoComponent implements OnInit {
 
   //busca dos dados dos graficos
   feedGrafico() {
-    this.graficoInfo = [];
+
+    let graficoInfo = [];
     //define os meses das requisições
     let date = new Date();
     date = new Date(date.setMonth(date.getMonth() - 1));
@@ -66,7 +68,7 @@ export class InfoComponent implements OnInit {
       let mes = date.getMonth() + 1;
       let mesCorreto = mes < 10? "0" + mes : mes;
       let dataCorreta = date.getFullYear() + "" + mesCorreto;
-      this.graficoInfo.push(this.months[mesCorreto] + "/" + date.getFullYear());
+      graficoInfo.push(this.months[mesCorreto] + "/" + date.getFullYear());
       date = new Date(date.setMonth(date.getMonth() - 1));
       //faz as requisições
       requisicoesBolsa.push(this.dataService.getBolsaData(this.municipioModel, dataCorreta))
@@ -79,9 +81,8 @@ export class InfoComponent implements OnInit {
             valor.push(bolsa[index][0].valor);
             console.log(bolsa[index][0].valor + " " + bolsa[index][0].quantidadeBeneficiados + " " + this.municipioModel + " " + datas[index]);
         }
-    });  
-    //chama a função que desenha o grafico
-    this.drawChart(valor, beneficiarios);
+        this.drawChart(this.LineChart ,valor, beneficiarios, graficoInfo); 
+  });
   }
 
   //ordenar em ordem alfabetica
@@ -94,48 +95,55 @@ export class InfoComponent implements OnInit {
     return data;
   }
 
-  //Contrução do gráfico
-  drawChart(valor, beneficiarios){
-    console.log(valor);
-    let LineChart = new Chart('lineChart', {
-      type: 'line',
-    data: {
-    labels: this.graficoInfo,
-    datasets: [{
-        label: 'Beneficiários',
-        data: beneficiarios,
-        fill:false,
-        lineTension:0.2,
-        borderColor:"white",
-        borderWidth: 1
-    },{
-      label: 'Valor total destinado ao Programa Bolsa Família',
-      data: valor,
-      fill:false,
-      lineTension:0.2,
-      borderColor:"red",
-      borderWidth: 1
+  //envio de dados para o gráfico
+  drawChart(chart, valor, beneficiarios, graficoInfo){
+    //apaga os dados antigos
+    for(let index = 0; index < 12; index++){
+      chart.data.labels.pop();
+    
+      chart.data.datasets[0].data.pop();
+      chart.data.datasets[1].data.pop(); 
     }
-    ]
-    }, 
-    options: {
-    title:{
-        text:"Line Chart",
-        display:true
-    },
-    scales: {
-        yAxes: [{
-            ticks: {
-                beginAtZero:true
-            }
-        }]
+    //preenche com dados novos
+    for(let index = 0; index< 12; index++){
+      chart.data.labels.push(graficoInfo[index]);
+      chart.data.datasets[0].data.push(beneficiarios[index]);
+      chart.data.datasets[1].data.push(valor[index]); 
     }
-    }
-    });
+    chart.update();
   }
-  
+
   //init
   ngOnInit() {
     this.feedUFS(); 
+
+    this.LineChart = new Chart('lineChart', {
+      type: 'line',
+    data: {
+     labels: this.graficoInfo,
+     datasets: [{
+         label: 'Número de Beneficiários',
+         data: this.beneficiarios,
+         fill:false,
+         borderColor:"white",
+         borderWidth: 1
+     },
+     {
+      label: 'Valor Total Direcionado para o Bolsa Família',
+      data: this.valor,
+      fill:false,
+      borderColor:"red",
+      borderWidth: 1
+    }]
+    }, 
+    options: {
+     title:{
+         text:"Dados do Bolsa Família",
+         display:true,
+         fontColor: "white",
+         fontSize: 20
+      }
+    }
+    });
   }
 }
