@@ -11,7 +11,9 @@ import * as Chart from 'chart.js';
   styleUrls: ['./info.component.scss']
 })
 export class InfoComponent implements OnInit {
-
+  //mostra o load
+  loading = false;
+  //variavel referente ao grafico
   LineChart: any;
   //Variaveis relacionadas ao HTML
   ufsList: Object = [];
@@ -20,6 +22,7 @@ export class InfoComponent implements OnInit {
   municipioModel: string = "";
   ufDisable: boolean = true;
   municipioDisable: boolean = true;
+  //variaveis para alimentar o grafico
   graficoInfo = [];
   beneficiarios = [];
   valor = [];
@@ -29,6 +32,7 @@ export class InfoComponent implements OnInit {
   constructor(private dataService: DataService) { }
   //Alimenta o campo select de estados
   feedUFS(){
+    this.loading = true;
     this.dataService.getSelectsInfo("https://servicodados.ibge.gov.br/api/v1/localidades/estados").subscribe((data: any[])=>{
       this.sortAlphabetically(data);
       this.ufsList = data;
@@ -38,10 +42,12 @@ export class InfoComponent implements OnInit {
         alert("Erro ao consultar a lista de estados!");
       }
     });  
+    this.loading = false;
   }
 
   //Alimenta o campo select com os municipios de acordo com o estado selecionado
   feedMunicipios(){
+    this.loading = true;
     this.municipioModel = "";
     this.municipioDisable = true;
     this.dataService.getSelectsInfo("http://servicodados.ibge.gov.br/api/v1/localidades/estados/" + this.ufModel +"/municipios").subscribe((data: any[])=>{
@@ -53,11 +59,12 @@ export class InfoComponent implements OnInit {
         alert("Erro ao consultar a lista de municípos!");
       }
     });  
+    this.loading = false;
   }
 
   //busca dos dados dos graficos
   feedGrafico() {
-
+    this.loading = true;
     let graficoInfo = [];
     //define os meses das requisições
     let date = new Date();
@@ -79,7 +86,6 @@ export class InfoComponent implements OnInit {
         for (let index = 0;index < bolsa.length; index++) {
             beneficiarios.push(bolsa[index][0].quantidadeBeneficiados);
             valor.push(bolsa[index][0].valor);
-            console.log(bolsa[index][0].valor + " " + bolsa[index][0].quantidadeBeneficiados + " " + this.municipioModel + " " + datas[index]);
         }
         this.drawChart(this.LineChart ,valor, beneficiarios, graficoInfo); 
   });
@@ -111,12 +117,14 @@ export class InfoComponent implements OnInit {
       chart.data.datasets[1].data.push(valor[index]); 
     }
     chart.update();
+    this.loading = false;
   }
 
   //init
   ngOnInit() {
     this.feedUFS(); 
 
+    //construção do grafico na página
     this.LineChart = new Chart('lineChart', {
       type: 'line',
     data: {
@@ -126,14 +134,16 @@ export class InfoComponent implements OnInit {
          data: this.beneficiarios,
          fill:false,
          borderColor:"white",
-         borderWidth: 1
+         borderWidth: 5,
+         pointRadius: 6
      },
      {
       label: 'Valor Total Direcionado para o Bolsa Família',
       data: this.valor,
       fill:false,
       borderColor:"red",
-      borderWidth: 1
+      borderWidth: 5,
+      pointRadius: 6
     }]
     }, 
     options: {
@@ -142,6 +152,11 @@ export class InfoComponent implements OnInit {
          display:true,
          fontColor: "white",
          fontSize: 20
+      },
+      legend:{
+        labels:{
+          fontColor: "white"
+        }
       }
     }
     });

@@ -1,4 +1,7 @@
 <div class="info">
+    <div class="loading" [hidden]="!loading">
+        <div class="loading-box"><img src="../../assets/imgs/loading.gif"></div>
+    </div>
     <div class="selects">
         <div class="select">
             <label class="select-label">Estado:</label>
@@ -16,8 +19,9 @@
             </select>
         </div>
     </div>
-
-    <div class="grafico">
-        <canvas id="lineChart" ></canvas>
+    <div class="grafico-area">
+        <div class="grafico">
+            <canvas id="lineChart" ></canvas>
+        </div>
     </div>
 </div>

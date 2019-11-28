@@ -1,5 +1,32 @@
 .info{
 
+    .loading{
+        height: 100vh;
+        position: absolute;
+        width: 100vw;
+        top:0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        
+        .loading-box{
+            width: 90px;
+            height: 90px;
+            position: absolute;
+            top:calc(50vh - 45px);
+            left: calc(50vw - 45px);
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            overflow: hidden;
+
+            img{
+                width: 80%;
+                height: 80%;
+                margin-left: 10%;
+                margin-top: 10%;
+            }
+        }
+    }
+
     .selects{
         width: 100%;
         display: flex;
@@ -25,10 +52,15 @@
         }
     }
     
-    .grafico{
+    .grafico-area{
         width: 66%;
         margin-left: 17%;
-        height: 600px;
+        height: 650px;
         margin-top: 20px;
+        overflow-x: auto;
+
+        .grafico{
+            min-width: 800px;
+        }
     }
 }
