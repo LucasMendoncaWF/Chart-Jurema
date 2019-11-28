@@ -12,20 +12,21 @@ import * as Chart from 'chart.js';
 })
 export class InfoComponent implements OnInit {
 
+  //Variaveis relacionadas ao HTML
   ufsList: Object = [];
   municipiosList: Object = [];
   ufModel: string = "";
   municipioModel: string = "";
-
   ufDisable: boolean = true;
   municipioDisable: boolean = true;
 
+  //meses que vao aparecer no grafico
   graficoInfo = [];
-
+  //codigo dos meses
   months: Object = {"01": "Janeiro", "02": "Fevereiro", "03": "Março", "04": "Abril", "05": "Maio", "06": "Junho", "07": "Julho", "08": "Agosto", "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro"};
 
   constructor(private dataService: DataService) { }
-
+  //Alimenta o campo select de estados
   feedUFS(){
     this.dataService.getSelectsInfo("https://servicodados.ibge.gov.br/api/v1/localidades/estados").subscribe((data: any[])=>{
       this.sortAlphabetically(data);
@@ -38,6 +39,7 @@ export class InfoComponent implements OnInit {
     });  
   }
 
+  //Alimenta o campo select com os municipios de acordo com o estado selecionado
   feedMunicipios(){
     this.municipioModel = "";
     this.municipioDisable = true;
@@ -52,8 +54,10 @@ export class InfoComponent implements OnInit {
     });  
   }
 
+  //busca dos dados dos graficos
   feedGrafico() {
     this.graficoInfo = [];
+    //define os meses das requisições
     let date = new Date();
     date = new Date(date.setMonth(date.getMonth() - 1));
     const requisicoesBolsa = [];
@@ -62,11 +66,9 @@ export class InfoComponent implements OnInit {
       let mes = date.getMonth() + 1;
       let mesCorreto = mes < 10? "0" + mes : mes;
       let dataCorreta = date.getFullYear() + "" + mesCorreto;
-      
       this.graficoInfo.push(this.months[mesCorreto] + "/" + date.getFullYear());
       date = new Date(date.setMonth(date.getMonth() - 1));
-
-
+      //faz as requisições
       requisicoesBolsa.push(this.dataService.getBolsaData(this.municipioModel, dataCorreta))
       datas.push(dataCorreta);
     }
@@ -78,6 +80,7 @@ export class InfoComponent implements OnInit {
             console.log(bolsa[index][0].valor + " " + bolsa[index][0].quantidadeBeneficiados + " " + this.municipioModel + " " + datas[index]);
         }
     });  
+    //chama a função que desenha o grafico
     this.drawChart(valor, beneficiarios);
   }
 
