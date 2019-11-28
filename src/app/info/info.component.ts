@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../data.service';
 import { forkJoin } from 'rxjs';
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Color, Label } from 'ng2-charts';
 import * as Chart from 'chart.js';
 
 @Component({
@@ -43,6 +41,8 @@ export class InfoComponent implements OnInit {
       }
     });  
     this.loading = false;
+    //retorna para o spec.ts
+    return this.ufsList;
   }
 
   //Alimenta o campo select com os municipios de acordo com o estado selecionado
@@ -60,6 +60,8 @@ export class InfoComponent implements OnInit {
       }
     });  
     this.loading = false;
+    //retorna para o spec.ts
+    return this.municipiosList;
   }
 
   //busca dos dados dos graficos
@@ -87,8 +89,10 @@ export class InfoComponent implements OnInit {
             beneficiarios.push(bolsa[index][0].quantidadeBeneficiados);
             valor.push(bolsa[index][0].valor);
         }
-        this.drawChart(this.LineChart ,valor, beneficiarios, graficoInfo); 
+        this.drawChart(this.LineChart ,valor, beneficiarios, graficoInfo);    
   });
+  //retorna para o spec.ts
+  return valor;
   }
 
   //ordenar em ordem alfabetica
@@ -104,9 +108,8 @@ export class InfoComponent implements OnInit {
   //envio de dados para o gráfico
   drawChart(chart, valor, beneficiarios, graficoInfo){
     //apaga os dados antigos
-    for(let index = 0; index < 12; index++){
+    for(let index = 0; index < graficoInfo.length; index++){
       chart.data.labels.pop();
-    
       chart.data.datasets[0].data.pop();
       chart.data.datasets[1].data.pop(); 
     }
@@ -118,6 +121,8 @@ export class InfoComponent implements OnInit {
     }
     chart.update();
     this.loading = false;
+    //retorna para o spec.ts
+    return chart.data.datasets[0].data[0] + chart.data.datasets[1].data[0] + chart.data.labels[0];
   }
 
   //init
@@ -141,22 +146,17 @@ export class InfoComponent implements OnInit {
       label: 'Valor Total Direcionado para o Bolsa Família',
       data: this.valor,
       fill:false,
-      borderColor:"red",
+      borderColor:"#df3927",
       borderWidth: 5,
       pointRadius: 6
     }]
     }, 
     options: {
      title:{
-         text:"Dados do Bolsa Família",
-         display:true,
-         fontColor: "white",
-         fontSize: 20
+         display:false,
       },
       legend:{
-        labels:{
-          fontColor: "white"
-        }
+        display: false,
       }
     }
     });
